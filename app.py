@@ -4,10 +4,6 @@ import pandas as pd
 
 import streamlit as st 
 
-
-
-
-
 pickle_in = open("classifier.pkl","rb")
 classifier=joblib.load(pickle_in)
 
