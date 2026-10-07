@@ -2,292 +2,189 @@ import joblib
 import numpy as np
 import streamlit as st
 
-# =========================================================
-# PAGE CONFIGURATION
-# =========================================================
+# --------------------------------------------------
+# PAGE CONFIG
+# --------------------------------------------------
 
 st.set_page_config(
-    page_title="Banknote Authentication",
+    page_title="Banknote Authentication System",
     page_icon="💳",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    layout="centered"
 )
 
-# =========================================================
+# --------------------------------------------------
 # LOAD MODEL
-# =========================================================
+# --------------------------------------------------
 
 classifier = joblib.load("classifier.pkl")
 
-# =========================================================
-# CUSTOM CSS
-# =========================================================
+# --------------------------------------------------
+# PROFESSIONAL BANKING THEME
+# --------------------------------------------------
 
 st.markdown("""
 <style>
 
-    /* ---------- MAIN PAGE ---------- */
+.stApp {
+    background:
+        radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.18), transparent 25%),
+        radial-gradient(circle at 90% 80%, rgba(14, 165, 233, 0.12), transparent 25%),
+        linear-gradient(135deg, #06101f 0%, #0b1b32 50%, #071426 100%);
+    color: white;
+}
 
-    .stApp {
-        background: #0b1120;
-        color: #f8fafc;
-    }
+/* Remove extra top space */
+.block-container {
+    padding-top: 2rem;
+    max-width: 850px;
+}
 
-    .main {
-        padding: 0rem 2rem 2rem 2rem;
-    }
+/* Main Title */
+.title {
+    text-align: center;
+    padding: 30px 20px 25px;
+}
 
-    /* ---------- SIDEBAR ---------- */
+.title h1 {
+    font-size: 38px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+}
 
-    section[data-testid="stSidebar"] {
-        background: #111827;
-        border-right: 1px solid #1f2937;
-    }
+.title p {
+    color: #94a3b8;
+    font-size: 16px;
+    margin: 0;
+}
 
-    section[data-testid="stSidebar"] h1 {
-        color: #ffffff;
-        font-size: 24px;
-    }
+/* Bank symbol */
+.bank-icon {
+    text-align: center;
+    font-size: 42px;
+    margin-bottom: 5px;
+}
 
-    section[data-testid="stSidebar"] p {
-        color: #9ca3af;
-    }
+/* Input Card */
+.input-card {
+    background: rgba(15, 30, 52, 0.92);
+    padding: 30px;
+    border-radius: 18px;
+    border: 1px solid #243b5a;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.30);
+}
 
-    /* ---------- HEADER ---------- */
+/* Labels */
+label {
+    color: #cbd5e1 !important;
+    font-weight: 500 !important;
+}
 
-    .hero {
-        background: linear-gradient(
-            135deg,
-            #172554 0%,
-            #1e3a8a 50%,
-            #312e81 100%
-        );
+/* Input fields */
+div[data-baseweb="input"] {
+    background-color: #091525 !important;
+    border: 1px solid #2b4668 !important;
+    border-radius: 9px !important;
+}
 
-        padding: 35px 40px;
-        border-radius: 18px;
-        margin-bottom: 30px;
-        border: 1px solid #263b73;
-        box-shadow: 0 15px 40px rgba(0,0,0,0.25);
-    }
+div[data-baseweb="input"]:focus-within {
+    border: 1px solid #3b82f6 !important;
+    box-shadow: 0 0 0 1px #3b82f6 !important;
+}
 
-    .hero h1 {
-        color: white;
-        font-size: 38px;
-        margin-bottom: 8px;
-        font-weight: 700;
-    }
+input {
+    color: white !important;
+}
 
-    .hero p {
-        color: #cbd5e1;
-        font-size: 16px;
-        margin: 0;
-    }
+/* Prediction Button */
+.stButton > button {
+    width: 100%;
+    height: 55px;
 
-    /* ---------- SECTION TITLE ---------- */
+    background: linear-gradient(
+        135deg,
+        #2563eb,
+        #0ea5e9
+    );
 
-    .section-title {
-        color: #e2e8f0;
-        font-size: 21px;
-        font-weight: 600;
-        margin-top: 15px;
-        margin-bottom: 15px;
-    }
+    color: white;
+    border: none;
+    border-radius: 11px;
 
-    /* ---------- INPUT CARD ---------- */
+    font-size: 17px;
+    font-weight: 600;
 
-    .input-card {
-        background: #111827;
-        padding: 24px;
-        border-radius: 16px;
-        border: 1px solid #1f2937;
-        margin-bottom: 20px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    }
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.30);
 
-    /* ---------- INPUT LABELS ---------- */
+    transition: all 0.25s ease;
+}
 
-    label {
-        color: #cbd5e1 !important;
-        font-weight: 500 !important;
-    }
+.stButton > button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(37, 99, 235, 0.45);
+}
 
-    /* ---------- NUMBER INPUT ---------- */
+/* Result */
+.result {
+    margin-top: 25px;
+    padding: 22px;
+    text-align: center;
 
-    div[data-baseweb="input"] {
-        background-color: #0f172a;
-        border: 1px solid #334155;
-        border-radius: 10px;
-    }
+    background: rgba(15, 30, 52, 0.95);
 
-    div[data-baseweb="input"]:focus-within {
-        border: 1px solid #6366f1;
-        box-shadow: 0 0 0 1px #6366f1;
-    }
+    border: 1px solid #294564;
+    border-radius: 15px;
+}
 
-    input {
-        color: #f8fafc !important;
-    }
+.result-label {
+    color: #94a3b8;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
 
-    /* ---------- BUTTON ---------- */
+.result-value {
+    color: #ffffff;
+    font-size: 26px;
+    font-weight: 700;
+    margin-top: 8px;
+}
 
-    .stButton > button {
-        width: 100%;
-        height: 50px;
-        border-radius: 10px;
-        border: none;
-        background: linear-gradient(
-            90deg,
-            #4f46e5,
-            #6366f1
-        );
-        color: white;
-        font-size: 16px;
-        font-weight: 600;
-        transition: 0.3s;
-    }
-
-    .stButton > button:hover {
-        background: linear-gradient(
-            90deg,
-            #4338ca,
-            #4f46e5
-        );
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(79,70,229,0.3);
-    }
-
-    /* ---------- RESULT ---------- */
-
-    .result-card {
-        padding: 25px;
-        border-radius: 16px;
-        text-align: center;
-        margin-top: 25px;
-        border: 1px solid #334155;
-        background: #111827;
-    }
-
-    .result-title {
-        font-size: 14px;
-        color: #94a3b8;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-
-    .result-value {
-        font-size: 30px;
-        font-weight: 700;
-        margin-top: 8px;
-    }
-
-    /* ---------- INFO CARDS ---------- */
-
-    .info-card {
-        background: #111827;
-        padding: 22px;
-        border-radius: 14px;
-        border: 1px solid #1f2937;
-        height: 100%;
-    }
-
-    .info-card h3 {
-        color: #e2e8f0;
-        font-size: 18px;
-    }
-
-    .info-card p {
-        color: #94a3b8;
-        line-height: 1.6;
-    }
-
-    /* ---------- FOOTER ---------- */
-
-    .footer {
-        text-align: center;
-        color: #64748b;
-        margin-top: 45px;
-        padding-top: 20px;
-        border-top: 1px solid #1f2937;
-        font-size: 13px;
-    }
+/* Footer */
+.footer {
+    text-align: center;
+    color: #64748b;
+    font-size: 12px;
+    margin-top: 30px;
+}
 
 </style>
 """, unsafe_allow_html=True)
 
 
-# =========================================================
-# SIDEBAR
-# =========================================================
-
-with st.sidebar:
-
-    st.markdown("## 💳 Banknote AI")
-
-    st.markdown("""
-    <p>
-    An ML-powered application for detecting whether
-    a banknote is authentic or potentially forged.
-    </p>
-    """, unsafe_allow_html=True)
-
-    st.markdown("---")
-
-    st.markdown("### 🤖 Machine Learning")
-
-    st.markdown("""
-    **Algorithm:** Random Forest  
-    **Task:** Binary Classification  
-    **Input Features:** 4  
-    **Model:** `classifier.pkl`
-    """)
-
-    st.markdown("---")
-
-    st.markdown("### 📊 Features")
-
-    st.markdown("""
-    - Variance
-    - Skewness
-    - Curtosis
-    - Entropy
-    """)
-
-    st.markdown("---")
-
-    st.caption("Built with Python + Streamlit + Scikit-learn")
-
-
-# =========================================================
-# HERO SECTION
-# =========================================================
+# --------------------------------------------------
+# TITLE
+# --------------------------------------------------
 
 st.markdown("""
-<div class="hero">
+<div class="title">
 
-    <h1>💳 Banknote Authentication</h1>
+    <div class="bank-icon">🏦</div>
 
-    <p>
-        Machine Learning powered system for identifying
-        authentic and potentially forged banknotes.
-    </p>
+    <h1>Banknote Authentication System</h1>
+
+    <p>Machine Learning Based Banknote Verification</p>
 
 </div>
 """, unsafe_allow_html=True)
 
 
-# =========================================================
+# --------------------------------------------------
 # INPUT SECTION
-# =========================================================
+# --------------------------------------------------
 
-st.markdown(
-    '<div class="section-title">🔍 Enter Banknote Features</div>',
-    unsafe_allow_html=True
-)
-
-st.markdown(
-    '<div class="input-card">',
-    unsafe_allow_html=True
-)
+st.markdown('<div class="input-card">', unsafe_allow_html=True)
 
 col1, col2 = st.columns(2)
 
@@ -296,15 +193,13 @@ with col1:
     variance = st.number_input(
         "Variance",
         value=0.0,
-        format="%.6f",
-        help="Variance of the wavelet transformed image"
+        format="%.6f"
     )
 
     skewness = st.number_input(
         "Skewness",
         value=0.0,
-        format="%.6f",
-        help="Skewness of the wavelet transformed image"
+        format="%.6f"
     )
 
 with col2:
@@ -312,168 +207,68 @@ with col2:
     curtosis = st.number_input(
         "Curtosis",
         value=0.0,
-        format="%.6f",
-        help="Curtosis of the wavelet transformed image"
+        format="%.6f"
     )
 
     entropy = st.number_input(
         "Entropy",
         value=0.0,
-        format="%.6f",
-        help="Entropy of the wavelet transformed image"
+        format="%.6f"
     )
+
+st.markdown("<br>", unsafe_allow_html=True)
+
+
+# --------------------------------------------------
+# PREDICTION BUTTON
+# --------------------------------------------------
+
+predict = st.button(
+    "🔍  Verify Banknote",
+    use_container_width=True
+)
 
 st.markdown('</div>', unsafe_allow_html=True)
 
 
-# =========================================================
+# --------------------------------------------------
 # PREDICTION
-# =========================================================
+# --------------------------------------------------
 
-button_col1, button_col2, button_col3 = st.columns([1, 2, 1])
+if predict:
 
-with button_col2:
-
-    predict_button = st.button(
-        "🔎 Authenticate Banknote",
-        use_container_width=True
-    )
-
-
-if predict_button:
-
-    # Prepare input
     input_data = np.array([
         [variance, skewness, curtosis, entropy]
     ])
 
-    # Prediction
     prediction = classifier.predict(input_data)[0]
 
-    # Optional probability
-    probability = None
-
-    if hasattr(classifier, "predict_proba"):
-        probability = classifier.predict_proba(input_data)[0].max()
-
-    # -----------------------------------------------------
-    # RESULT
-    # -----------------------------------------------------
-
     if prediction == 0:
-
-        st.markdown("""
-        <div class="result-card">
-
-            <div class="result-title">
-                Authentication Result
-            </div>
-
-            <div class="result-value">
-                ✅ Authentic Banknote
-            </div>
-
-        </div>
-        """, unsafe_allow_html=True)
-
+        result = "✓ Authentic Banknote"
     else:
+        result = "⚠ Potentially Forged Banknote"
 
-        st.markdown("""
-        <div class="result-card">
+    st.markdown(f"""
+    <div class="result">
 
-            <div class="result-title">
-                Authentication Result
-            </div>
-
-            <div class="result-value">
-                ⚠️ Potentially Forged Banknote
-            </div>
-
+        <div class="result-label">
+            Verification Result
         </div>
-        """, unsafe_allow_html=True)
 
-    # Probability
-    if probability is not None:
-
-        st.progress(
-            float(probability),
-            text=f"Model Confidence: {probability * 100:.2f}%"
-        )
-
-
-# =========================================================
-# PROJECT INFORMATION
-# =========================================================
-
-st.markdown("<br>", unsafe_allow_html=True)
-
-st.markdown(
-    '<div class="section-title">📌 About This Project</div>',
-    unsafe_allow_html=True
-)
-
-info1, info2, info3 = st.columns(3)
-
-with info1:
-
-    st.markdown("""
-    <div class="info-card">
-
-    <h3>🎯 Objective</h3>
-
-    <p>
-    Build a machine learning classification system
-    capable of distinguishing between authentic and
-    forged banknotes using statistical image features.
-    </p>
+        <div class="result-value">
+            {result}
+        </div>
 
     </div>
     """, unsafe_allow_html=True)
 
 
-with info2:
-
-    st.markdown("""
-    <div class="info-card">
-
-    <h3>⚙️ Technology</h3>
-
-    <p>
-    Python, NumPy, Joblib, Scikit-learn and Streamlit
-    are used to train, save and deploy the machine
-    learning model.
-    </p>
-
-    </div>
-    """, unsafe_allow_html=True)
-
-
-with info3:
-
-    st.markdown("""
-    <div class="info-card">
-
-    <h3>📈 Input Features</h3>
-
-    <p>
-    The model uses variance, skewness, curtosis and
-    entropy extracted from banknote images.
-    </p>
-
-    </div>
-    """, unsafe_allow_html=True)
-
-
-# =========================================================
+# --------------------------------------------------
 # FOOTER
-# =========================================================
+# --------------------------------------------------
 
 st.markdown("""
 <div class="footer">
-
-    Banknote Authentication ML Application
-    <br>
-    Built with Python • Machine Learning • Streamlit
-
+    AI-powered banknote verification using Machine Learning
 </div>
 """, unsafe_allow_html=True)
