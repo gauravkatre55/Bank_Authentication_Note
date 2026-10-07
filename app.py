@@ -181,7 +181,7 @@ input {
 # PROFESSIONAL HEADER
 # --------------------------------------------------
 
-st.title("🏦 Banknote Authentication System")
+st.title("🏦 Bank Authentication System")
 
 st.markdown(
     '<div class="subtitle">'
